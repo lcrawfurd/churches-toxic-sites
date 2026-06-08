@@ -3,119 +3,169 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Churches in the Shadow of Toxic Sites — interactive map</title>
+<title>Churches in the Shadow of Toxic Sites</title>
+<meta name="description" content="Across 40 countries, 18,199 churches sit within 5 km of a documented contaminated site. An interactive map and short analysis.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <style>
-  html,body{height:100%;margin:0}
+  :root{--ink:#1c1c1c;--muted:#666;--accent:#C0392B;--amber:#E08A1E;--site:#7e57c2}
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.65}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  header{background:#141414;color:#fff;padding:46px 0 38px}
+  header .wrap{max-width:760px}
+  h1{font-family:"Helvetica Neue",Arial,sans-serif;font-size:2.1rem;line-height:1.15;margin:0 0 .35em}
+  .standfirst{color:#cfcfcf;font-style:italic;margin:0;font-size:1.05rem}
+  h2{font-family:"Helvetica Neue",Arial,sans-serif;font-size:1.3rem;margin:1.9em 0 .45em}
+  p{margin:0 0 1.1em}
+  a{color:#9a2617}
+  header a{color:#FFB52C}
+  strong{color:#000}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin:22px 0 4px}
+  .stat{background:#1f1f1f;border:1px solid #333;border-radius:8px;padding:12px 16px;flex:1 1 150px}
+  .stat .big{font-family:"Helvetica Neue",Arial,sans-serif;font-size:1.7rem;font-weight:700;color:#fff;line-height:1}
+  .stat .lbl{color:#bbb;font-size:.8rem;margin-top:5px;font-family:"Helvetica Neue",Arial,sans-serif}
+  /* map */
+  #mapsec{position:relative;height:620px;margin:8px 0 6px;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
   #map{position:absolute;inset:0;background:#0d0d0d}
-  .panel{position:absolute;z-index:1000;background:rgba(20,20,20,.92);color:#eee;
-    font-family:"Helvetica Neue",Arial,sans-serif;border-radius:8px;
-    box-shadow:0 4px 20px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
-  #title{top:12px;left:12px;max-width:330px;padding:14px 16px}
-  #title h1{margin:0 0 4px;font-size:1.15rem;line-height:1.2}
-  #title p{margin:0;font-size:.82rem;color:#bbb;line-height:1.45}
-  #title a{color:#FFB52C;text-decoration:none}
-  #legend{bottom:18px;left:12px;padding:10px 14px;font-size:.8rem}
+  #legend{position:absolute;z-index:1000;bottom:16px;left:12px;background:rgba(20,20,20,.92);
+    color:#eee;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.78rem;
+    border-radius:8px;padding:9px 13px;box-shadow:0 4px 18px rgba(0,0,0,.5)}
   #legend .row{display:flex;align-items:center;margin:3px 0}
-  #legend .dot{width:12px;height:12px;border-radius:50%;margin-right:8px;display:inline-block}
-  .leaflet-popup-content{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.85rem}
-  .pt{font-weight:700;margin-bottom:2px}
-  .muted{color:#888;font-size:.75rem}
+  #legend .dot{width:11px;height:11px;border-radius:50%;margin-right:8px;display:inline-block}
+  .cap{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.8rem;color:var(--muted);margin:.4em 0 0}
+  figure{margin:1.6em 0;text-align:center}
+  figure img{max-width:100%;height:auto;border:1px solid #eee}
+  .refs{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.9rem;line-height:1.5}
+  .refs li{margin:.4em 0}
+  footer{border-top:1px solid #ddd;margin-top:2.4em;padding:1.4em 0 3em;color:var(--muted);
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:.82rem}
+  .note{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.85rem;color:var(--muted)}
 </style>
 </head>
 <body>
-<div id="map"></div>
 
-<div id="title" class="panel">
-  <h1>⛪ Churches in the Shadow of Toxic Sites</h1>
-  <p>18,199 churches sit within 5&nbsp;km of a documented contaminated site across 40 countries.
-  <a href="briefing.html" target="_blank">Briefing ↗</a> ·
-  <a href="https://github.com/lcrawfurd/churches-toxic-sites#readme" target="_blank">Methods &amp; data ↗</a></p>
+<header>
+  <div class="wrap">
+    <h1>⛪ Churches in the Shadow of Toxic Sites</h1>
+    <p class="standfirst">It isn't only schools. Across 40 countries, tens of thousands of churches sit next to documented contaminated sites — and the people who lead them could help.</p>
+    <div class="stats">
+      <div class="stat"><div class="big">18,199</div><div class="lbl">churches within 5&nbsp;km of a site</div></div>
+      <div class="stat"><div class="big">2,615</div><div class="lbl">within 1&nbsp;km</div></div>
+      <div class="stat"><div class="big">40</div><div class="lbl">countries</div></div>
+      <div class="stat"><div class="big">Lead</div><div class="lbl">most common nearby pollutant</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<p>A recent <a href="https://doi.org/10.5281/zenodo.19359187" target="_blank">Center for Global Development working paper</a> showed that more than 250,000 schools in developing countries sit within 5&nbsp;km of a documented contaminated site. A natural question is whether schools are special, or whether this is simply where people — and the institutions that serve them — happen to be. So we looked at another building communities gather around: the church.</p>
+
+<p>Using OpenStreetMap data on roughly 220,000 Christian churches across 40 countries, we find that <strong>18,199 of them — about one in twelve — sit within 5&nbsp;km of a documented contaminated site, and 2,615 are within 1&nbsp;km.</strong> Lead is by far the most common pollutant nearby. The map below shows every one of them.</p>
+
 </div>
 
-<div id="legend" class="panel">
-  <div class="row"><span class="dot" style="background:#C0392B"></span>Church &lt; 1&nbsp;km from a site</div>
-  <div class="row"><span class="dot" style="background:#FFB52C"></span>Church 1–5&nbsp;km from a site</div>
-  <div class="row"><span class="dot" style="background:#7e57c2;border-radius:2px"></span>Contaminated site (TSIP)</div>
-  <div class="row muted">Proximity, not confirmed exposure. Lower bounds (OSM under-maps rural areas).</div>
+<div id="mapsec">
+  <div id="map"></div>
+  <div id="legend">
+    <div class="row"><span class="dot" style="background:#C0392B"></span>Church &lt; 1&nbsp;km from a site</div>
+    <div class="row"><span class="dot" style="background:#E08A1E"></span>Church 1–5&nbsp;km from a site</div>
+    <div class="row"><span class="dot" style="background:#7e57c2;border-radius:2px"></span>Contaminated site (TSIP)</div>
+  </div>
 </div>
+<div class="wrap"><p class="cap">Use the layer control (top-right) to toggle the 1–5&nbsp;km churches, the contaminated sites, and 5&nbsp;km buffer rings. Click any marker for details. Proximity is not confirmed exposure.</p></div>
+
+<div class="wrap">
+
+<h2>Why this matters</h2>
+<p>Childhood lead exposure permanently lowers cognitive function, and there is no safe level. It has been estimated to cost low- and middle-income countries close to a trillion dollars a year in lost productivity (Attina &amp; Trasande, 2013), and roughly one in three children worldwide already carries an elevated blood-lead level (UNICEF &amp; Pure Earth, <em>The Toxic Truth</em>, 2020). Causal studies in several of these countries — Mexico, Kenya, Indonesia — find that living near lead-handling sites measurably reduces children's test scores. Mercury, arsenic, and other heavy metals near these sites do similar harm.</p>
+<p>The pattern for churches looks just like the one for schools. Industry, housing, and the buildings where people gather concentrate in the same crowded, under-regulated urban areas. A church is not near a toxic site because anyone chose to put it there; it is near a toxic site for the same reason a school or a home is.</p>
+
+<h2>Where the churches are</h2>
+<p>Five countries account for most of the affected churches within 5&nbsp;km: the Philippines (3,079), Brazil (2,144), Indonesia (1,707), Kenya (1,500), and Ghana (1,430). Of the churches we can classify by denomination, the largest identifiable groups near sites are Catholic (about 4,100 within 5&nbsp;km) and Anglican (about 150), with most of the rest unlabelled in the data.</p>
+<figure>
+  <img alt="Churches within 5 km of a documented contaminated site, top 10 countries" src="figures/churches_by_country_top10.png">
+  <figcaption class="cap">Churches within 5&nbsp;km of a documented contaminated site, top 10 countries.</figcaption>
+</figure>
+
+<h2>Faith institutions run schools, too</h2>
+<p>This matters beyond the church building itself, because faith organisations educate millions of children near these same sites. In the school-census data behind the main paper, <strong>10,890 Catholic or Anglican schools sit within 5&nbsp;km of a documented contaminated site, and 2,003 within 1&nbsp;km.</strong> The Catholic and Anglican communions are among the largest non-state education providers in the developing world.</p>
+
+<h2>What faith communities could do</h2>
+<p>Churches cannot fix industrial pollution. But they are trusted local institutions with reach that governments often lack — and in Flint, Michigan, faith leaders and teachers were among the first to press the case that something was wrong with the water. Three modest roles stand out: <strong>awareness</strong> (telling families near a site how to reduce exposure — hand-washing, keeping toddlers off contaminated soil, blood-lead testing); <strong>pressure</strong> (asking local authorities for soil and water testing around their buildings and schools, which is cheap and rarely done); and <strong>siting</strong> (screening locations for nearby industry before building new schools and clinics).</p>
+
+<h2>How this was done</h2>
+<p>Church locations come from OpenStreetMap (Christian places of worship), downloaded via the Overpass API for 40 countries. Each church is matched to the nearest documented contaminated site in Pure Earth's Toxic Sites Identification Program, using the same great-circle proximity method as the parent paper. Full code, data, and a longer methods note are in the <a href="https://github.com/lcrawfurd/churches-toxic-sites#readme" target="_blank">GitHub repository</a>.</p>
+
+<p class="note"><strong>Caveats.</strong> These numbers measure <em>proximity</em>, not exposure. OpenStreetMap under-maps rural buildings and covers Christian places of worship only (no mosques, temples, or gurdwaras), and the contaminated-site database itself captures only a fraction of real sites — so every count here is a lower bound. This is a quick companion analysis, not a peer-reviewed paper.</p>
+
+<h2>References &amp; sources</h2>
+<ul class="refs">
+  <li>Crawfurd, L. (2026). <em>Schools in the Shadow of Toxic Sites: Pollution Proximity in Low- and Middle-Income Countries.</em> Center for Global Development. Replication data: <a href="https://doi.org/10.5281/zenodo.19359187" target="_blank">doi.org/10.5281/zenodo.19359187</a>.</li>
+  <li>Companion schools interactive map: <a href="https://center-for-global-development.github.io/toxic-schools-map/" target="_blank">toxic-schools-map</a>.</li>
+  <li>Pure Earth — Toxic Sites Identification Program: <a href="https://www.contaminatedsites.org" target="_blank">contaminatedsites.org</a> · <a href="https://www.pureearth.org" target="_blank">pureearth.org</a>.</li>
+  <li>Church locations: © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors (ODbL).</li>
+  <li>Attina &amp; Trasande (2013), <em>Environmental Health Perspectives</em> — economic cost of childhood lead exposure in LMICs.</li>
+  <li>UNICEF &amp; Pure Earth (2020), <em>The Toxic Truth</em> — global childhood lead exposure.</li>
+  <li>Dowling et&nbsp;al. (2016), <em>Annals of Global Health</em> — TSIP captures roughly one-seventh to one-ninth of contaminated sites in Ghana.</li>
+  <li>Litzow et&nbsp;al. (2024, Mexico); Ipapa (2023, Kenya); Berkhout et&nbsp;al. (2025, Indonesia) — proximity to lead/toxic sites and children's learning.</li>
+</ul>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Lee Crawfurd, Center for Global Development · companion to <em>Schools in the Shadow of Toxic Sites</em> ·
+    <a href="https://github.com/lcrawfurd/churches-toxic-sites">code &amp; data on GitHub</a>.
+    Map data © OpenStreetMap / CARTO; sites: Pure Earth TSIP.
+  </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
-const map = L.map('map', {worldCopyJump:true}).setView([5,20], 3);
+const map = L.map('map', {worldCopyJump:true, scrollWheelZoom:false}).setView([5,20], 2.5);
+map.on('focus', ()=>map.scrollWheelZoom.enable());
+map.on('blur',  ()=>map.scrollWheelZoom.disable());
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
   attribution:'&copy; OpenStreetMap, &copy; CARTO · sites: Pure Earth TSIP',
-  subdomains:'abcd', maxZoom:19
-}).addTo(map);
+  subdomains:'abcd', maxZoom:19}).addTo(map);
 
 const esc = s => (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-// --- contaminated sites layer ---
-const sitesLayer = L.layerGroup();
-const buffers = L.layerGroup();
+const sitesLayer = L.layerGroup(), buffers = L.layerGroup();
 fetch('sites.json').then(r=>r.json()).then(d=>{
   d.forEach(s=>{
-    L.circleMarker([s.la,s.lo],{radius:5,color:'#7e57c2',weight:1,
-      fillColor:'#7e57c2',fillOpacity:.85}).bindPopup(
-      `<div class="pt">${esc(s.n)||'Contaminated site'}</div>`+
-      `<div class="muted">${esc(s.c)}</div>`+
-      `Key pollutant: <b>${esc(s.p)||'—'}</b><br>`+
-      `Industry: ${esc(s.i)||'—'}<br>`+
-      `Churches within 5&nbsp;km: <b>${s.n5}</b> (≤1&nbsp;km: ${s.n1})`
-    ).addTo(sitesLayer);
-    L.circle([s.la,s.lo],{radius:5000,color:'#7e57c2',weight:1,
-      fill:false,opacity:.25,dashArray:'3'}).addTo(buffers);
+    L.circleMarker([s.la,s.lo],{radius:5,color:'#7e57c2',weight:1,fillColor:'#7e57c2',fillOpacity:.85})
+     .bindPopup(`<b>${esc(s.n)||'Contaminated site'}</b><br><span style="color:#888">${esc(s.c)}</span><br>`+
+       `Key pollutant: <b>${esc(s.p)||'—'}</b><br>Industry: ${esc(s.i)||'—'}<br>`+
+       `Churches within 5&nbsp;km: <b>${s.n5}</b> (≤1&nbsp;km: ${s.n1})`).addTo(sitesLayer);
+    L.circle([s.la,s.lo],{radius:5000,color:'#7e57c2',weight:1,fill:false,opacity:.25,dashArray:'3'}).addTo(buffers);
   });
   sitesLayer.addTo(map);
 });
 
-function churchCluster(color){
-  return L.markerClusterGroup({chunkedLoading:true, maxClusterRadius:45,
-    iconCreateFunction:c=>{
-      const n=c.getChildCount();
-      const size=n<50?28:n<500?34:42;
-      return L.divIcon({html:`<div style="background:${color};opacity:.9;color:#111;
-        border-radius:50%;width:${size}px;height:${size}px;display:flex;
-        align-items:center;justify-content:center;font:700 12px sans-serif;
-        font-family:Arial">${n}</div>`, className:'', iconSize:[size,size]});
-    }});
-}
-function churchMarker(c,color){
-  return L.circleMarker([c.la,c.lo],{radius:4,color:color,weight:1,
-    fillColor:color,fillOpacity:.85}).bindPopup(
-    `<div class="pt">${esc(c.n)||'Church'}</div>`+
-    `<div class="muted">${esc(c.c)} · ${esc(c.de)}</div>`+
-    `${c.d}&nbsp;km from nearest site<br>`+
-    `Nearest: ${esc(c.s)||'—'}<br>Pollutant: <b>${esc(c.p)||'—'}</b>`);
-}
+function cluster(color){return L.markerClusterGroup({chunkedLoading:true,maxClusterRadius:45,
+  iconCreateFunction:c=>{const n=c.getChildCount(),sz=n<50?28:n<500?34:42;
+    return L.divIcon({html:`<div style="background:${color};opacity:.9;color:#111;border-radius:50%;`+
+      `width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;`+
+      `font:700 12px Arial">${n}</div>`,className:'',iconSize:[sz,sz]});}});}
+function marker(c,color){return L.circleMarker([c.la,c.lo],{radius:4,color:color,weight:1,fillColor:color,fillOpacity:.85})
+  .bindPopup(`<b>${esc(c.n)||'Church'}</b><br><span style="color:#888">${esc(c.c)} · ${esc(c.de)}</span><br>`+
+    `${c.d}&nbsp;km from nearest site<br>Nearest: ${esc(c.s)||'—'}<br>Pollutant: <b>${esc(c.p)||'—'}</b>`);}
 
-// within 1 km — on by default
-const near1 = churchCluster('#C0392B');
-fetch('churches_1km.json').then(r=>r.json()).then(d=>{
-  d.forEach(c=>near1.addLayer(churchMarker(c,'#C0392B')));
-  near1.addTo(map);
-});
-
-// 1–5 km — lazy-load when first enabled (3 MB)
-const near5 = churchCluster('#FFB52C');
-let loaded5=false;
-function load5(){
-  if(loaded5) return; loaded5=true;
-  fetch('churches_5to.json').then(r=>r.json()).then(d=>{
-    d.forEach(c=>near5.addLayer(churchMarker(c,'#FFB52C')));
-  });
-}
-map.on('overlayadd', e=>{ if(e.layer===near5) load5(); });
+const near1 = cluster('#C0392B');
+fetch('churches_1km.json').then(r=>r.json()).then(d=>{d.forEach(c=>near1.addLayer(marker(c,'#C0392B')));near1.addTo(map);});
+const near5 = cluster('#E08A1E'); let loaded5=false;
+map.on('overlayadd', e=>{ if(e.layer===near5 && !loaded5){loaded5=true;
+  fetch('churches_5to.json').then(r=>r.json()).then(d=>d.forEach(c=>near5.addLayer(marker(c,'#E08A1E'))));}});
 
 L.control.layers(null,{
-  '⛪ Churches &lt; 1 km':near1,
-  '⛪ Churches 1–5 km':near5,
-  '▲ Contaminated sites':sitesLayer,
-  '◯ 5 km buffers':buffers
-},{collapsed:false, position:'topright'}).addTo(map);
+  '⛪ Churches &lt; 1 km':near1, '⛪ Churches 1–5 km':near5,
+  '▲ Contaminated sites':sitesLayer, '◯ 5 km buffers':buffers
+},{collapsed:false,position:'topright'}).addTo(map);
 </script>
 </body>
 </html>

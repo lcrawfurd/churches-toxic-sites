@@ -7,9 +7,7 @@ documented contaminated sites. This repository asks whether the same is true of
 another kind of community building — the church — and documents the method in
 full so the numbers can be checked.
 
-**Read the briefing:** [`briefing.html`](briefing.html) (self-contained, with chart).
-
-**Explore the interactive map:** [live map](https://lcrawfurd.github.io/churches-toxic-sites/) — churches and contaminated sites, by distance band (enable GitHub Pages to activate).
+**Read it / explore the map:** **[lcrawfurd.github.io/churches-toxic-sites](https://lcrawfurd.github.io/churches-toxic-sites/)** — one self-contained page with the write-up, the interactive map, and references.
 
 ## Headline findings
 
@@ -86,10 +84,9 @@ TSIP additionally needs the Overpass download and the TSIP site coordinates
 
 ```
 README.md            this file (findings + methods)
-index.html           interactive map (Leaflet); served via GitHub Pages
+index.html           self-contained page: write-up + interactive map + references (GitHub Pages)
 churches_1km.json / churches_5to.json / sites.json   map data
-briefing.html        self-contained briefing note (chart embedded)
-briefing.md          markdown version
+briefing_text_source.md   plain-text source of the write-up
 analyse.py           reproduces summary tables + chart from the dataset
 proximity.py         the core nearest-site method (documented)
 requirements.txt
