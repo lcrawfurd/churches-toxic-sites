@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Churches in the Shadow of Toxic Sites — interactive map</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>
+  html,body{height:100%;margin:0}
+  #map{position:absolute;inset:0;background:#0d0d0d}
+  .panel{position:absolute;z-index:1000;background:rgba(20,20,20,.92);color:#eee;
+    font-family:"Helvetica Neue",Arial,sans-serif;border-radius:8px;
+    box-shadow:0 4px 20px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+  #title{top:12px;left:12px;max-width:330px;padding:14px 16px}
+  #title h1{margin:0 0 4px;font-size:1.15rem;line-height:1.2}
+  #title p{margin:0;font-size:.82rem;color:#bbb;line-height:1.45}
+  #title a{color:#FFB52C;text-decoration:none}
+  #legend{bottom:18px;left:12px;padding:10px 14px;font-size:.8rem}
+  #legend .row{display:flex;align-items:center;margin:3px 0}
+  #legend .dot{width:12px;height:12px;border-radius:50%;margin-right:8px;display:inline-block}
+  .leaflet-popup-content{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.85rem}
+  .pt{font-weight:700;margin-bottom:2px}
+  .muted{color:#888;font-size:.75rem}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="title" class="panel">
+  <h1>⛪ Churches in the Shadow of Toxic Sites</h1>
+  <p>18,199 churches sit within 5&nbsp;km of a documented contaminated site across 40 countries.
+  <a href="briefing.html" target="_blank">Briefing ↗</a> ·
+  <a href="https://github.com/lcrawfurd/churches-toxic-sites#readme" target="_blank">Methods &amp; data ↗</a></p>
+</div>
+
+<div id="legend" class="panel">
+  <div class="row"><span class="dot" style="background:#C0392B"></span>Church &lt; 1&nbsp;km from a site</div>
+  <div class="row"><span class="dot" style="background:#FFB52C"></span>Church 1–5&nbsp;km from a site</div>
+  <div class="row"><span class="dot" style="background:#7e57c2;border-radius:2px"></span>Contaminated site (TSIP)</div>
+  <div class="row muted">Proximity, not confirmed exposure. Lower bounds (OSM under-maps rural areas).</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+const map = L.map('map', {worldCopyJump:true}).setView([5,20], 3);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; OpenStreetMap, &copy; CARTO · sites: Pure Earth TSIP',
+  subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+const esc = s => (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+// --- contaminated sites layer ---
+const sitesLayer = L.layerGroup();
+const buffers = L.layerGroup();
+fetch('sites.json').then(r=>r.json()).then(d=>{
+  d.forEach(s=>{
+    L.circleMarker([s.la,s.lo],{radius:5,color:'#7e57c2',weight:1,
+      fillColor:'#7e57c2',fillOpacity:.85}).bindPopup(
+      `<div class="pt">${esc(s.n)||'Contaminated site'}</div>`+
+      `<div class="muted">${esc(s.c)}</div>`+
+      `Key pollutant: <b>${esc(s.p)||'—'}</b><br>`+
+      `Industry: ${esc(s.i)||'—'}<br>`+
+      `Churches within 5&nbsp;km: <b>${s.n5}</b> (≤1&nbsp;km: ${s.n1})`
+    ).addTo(sitesLayer);
+    L.circle([s.la,s.lo],{radius:5000,color:'#7e57c2',weight:1,
+      fill:false,opacity:.25,dashArray:'3'}).addTo(buffers);
+  });
+  sitesLayer.addTo(map);
+});
+
+function churchCluster(color){
+  return L.markerClusterGroup({chunkedLoading:true, maxClusterRadius:45,
+    iconCreateFunction:c=>{
+      const n=c.getChildCount();
+      const size=n<50?28:n<500?34:42;
+      return L.divIcon({html:`<div style="background:${color};opacity:.9;color:#111;
+        border-radius:50%;width:${size}px;height:${size}px;display:flex;
+        align-items:center;justify-content:center;font:700 12px sans-serif;
+        font-family:Arial">${n}</div>`, className:'', iconSize:[size,size]});
+    }});
+}
+function churchMarker(c,color){
+  return L.circleMarker([c.la,c.lo],{radius:4,color:color,weight:1,
+    fillColor:color,fillOpacity:.85}).bindPopup(
+    `<div class="pt">${esc(c.n)||'Church'}</div>`+
+    `<div class="muted">${esc(c.c)} · ${esc(c.de)}</div>`+
+    `${c.d}&nbsp;km from nearest site<br>`+
+    `Nearest: ${esc(c.s)||'—'}<br>Pollutant: <b>${esc(c.p)||'—'}</b>`);
+}
+
+// within 1 km — on by default
+const near1 = churchCluster('#C0392B');
+fetch('churches_1km.json').then(r=>r.json()).then(d=>{
+  d.forEach(c=>near1.addLayer(churchMarker(c,'#C0392B')));
+  near1.addTo(map);
+});
+
+// 1–5 km — lazy-load when first enabled (3 MB)
+const near5 = churchCluster('#FFB52C');
+let loaded5=false;
+function load5(){
+  if(loaded5) return; loaded5=true;
+  fetch('churches_5to.json').then(r=>r.json()).then(d=>{
+    d.forEach(c=>near5.addLayer(churchMarker(c,'#FFB52C')));
+  });
+}
+map.on('overlayadd', e=>{ if(e.layer===near5) load5(); });
+
+L.control.layers(null,{
+  '⛪ Churches &lt; 1 km':near1,
+  '⛪ Churches 1–5 km':near5,
+  '▲ Contaminated sites':sitesLayer,
+  '◯ 5 km buffers':buffers
+},{collapsed:false, position:'topright'}).addTo(map);
+</script>
+</body>
+</html>

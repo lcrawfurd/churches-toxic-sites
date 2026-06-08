@@ -9,6 +9,8 @@ full so the numbers can be checked.
 
 **Read the briefing:** [`briefing.html`](briefing.html) (self-contained, with chart).
 
+**Explore the interactive map:** [live map](https://lcrawfurd.github.io/churches-toxic-sites/) — churches and contaminated sites, by distance band (enable GitHub Pages to activate).
+
 ## Headline findings
 
 Across **40 countries**, of **219,910** Christian places of worship mapped in
@@ -84,6 +86,8 @@ TSIP additionally needs the Overpass download and the TSIP site coordinates
 
 ```
 README.md            this file (findings + methods)
+index.html           interactive map (Leaflet); served via GitHub Pages
+churches_1km.json / churches_5to.json / sites.json   map data
 briefing.html        self-contained briefing note (chart embedded)
 briefing.md          markdown version
 analyse.py           reproduces summary tables + chart from the dataset
