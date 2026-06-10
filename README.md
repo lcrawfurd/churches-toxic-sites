@@ -17,7 +17,7 @@ OpenStreetMap:
 - **18,199 (8.3%)** sit within **5 km** of a documented contaminated site
 - **2,615 (1.2%)** sit within **1 km**
 - **Lead** is the most common nearby pollutant (≈9,400 churches within 5 km of a lead site)
-- By denomination within 5 km (OSM tag + name-inferred): Catholic ≈4,500, other Christian ≈6,100 (Pentecostal, Baptist, Evangelical, Adventist…), Anglican ≈210; ≈7,300 still unlabelled
+- By denomination within 5 km (OSM tag + name-inferred): Catholic ≈4,800, other Christian ≈6,300 (Pentecostal, Baptist, Evangelical, Adventist…), Anglican ≈210; ≈6,900 still unlabelled
 - Most affected countries (within 5 km): Philippines (3,079), Brazil (2,144), Indonesia (1,707), Kenya (1,500), Ghana (1,430)
 
 A companion count from the parent paper's school-census data: **10,890**
@@ -52,8 +52,12 @@ into Catholic, Anglican, Other Christian, and Unspecified (`denom_class`). About
 46% of churches have no denomination tag; for those, denomination was inferred
 from the church *name* by multilingual keyword match (`classify_denomination.py`),
 producing `denom_guess` (specific denomination) and `denom_class_final` (combined
-tag + name-inferred class). Only ~15% of untagged churches have a name with a
-clear signal; ambiguous names (e.g. "St Mary's Church") are left Unspecified.
+tag + name-inferred class). The match covers explicit denomination words (in
+several languages, plus acronyms like ACK, PCEA, SDA) and a high-precision set of
+Catholic devotional/order/saint markers (Our Lady, Sacred Heart, Comboni,
+parroquia, etc.); explicit denominations take priority, so e.g. "ACK St Teresa"
+stays Anglican. About 21% of untagged churches have a name with a clear signal;
+ambiguous names (e.g. "St Mary's Church") are left Unspecified.
 
 ## Reproduce
 

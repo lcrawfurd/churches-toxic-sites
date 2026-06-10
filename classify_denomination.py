@@ -27,14 +27,15 @@ CSV = ROOT / "data" / "osm_churches_near_tsip.csv"
 
 # (specific denomination, broad class, regex) — checked in order, first match wins
 RULES = [
-    ("Catholic",            "Catholic",        r"\bcatholic|cath[oó]lic|kath?olik|katolik|\br\.?c\.?\b|gereja katolik|paroquia|parroquia|paroisse"),
-    ("Anglican/Episcopal",  "Anglican",        r"anglican|anglicana|episcopal|church of england|\back\b|church of the province"),
-    ("Orthodox",            "Other Christian", r"orthodox|ortodox|ortodoxa|coptic|tewahedo|ethiopian orthodox"),
+    ("Catholic",            "Catholic",        r"\bcatholic|cath[oó]lic|kath?olik|katolik|\br\.?c\.?\b|gereja katolik|roman catholic"),
+    ("Anglican/Episcopal",  "Anglican",        r"anglican|anglicana|episcopal|church of england|\ba\.?c\.?k\.?\b|church of the province"),
+    ("Orthodox",            "Other Christian", r"orthodox|ortodox|ortodoxa|coptic|tewahedo|jacobite|syriac"),
     ("Methodist",           "Other Christian", r"methodist|metodist|metodista"),
     ("Presbyterian",        "Other Christian", r"presbyterian|presbiterian|presbiteriana|\bpcea\b|reform"),
     ("Baptist",             "Other Christian", r"baptist|bautista|batista|\bbaptis\b"),
-    ("Lutheran",            "Other Christian", r"lutheran|luteran|luterana|\bhkbp\b"),
+    ("Lutheran",            "Other Christian", r"luther|luteran|luterana|luth[ée]rien|\bhkbp\b"),
     ("Adventist",           "Other Christian", r"adventist|adventista|seventh[- ]day|\bsda\b"),
+    ("Church of God",       "Other Christian", r"church of god|\bcogic\b"),
     ("Assemblies of God",   "Other Christian", r"assemblies of god|assembly of god|asambleas de dios|assembleia de deus|\baog\b"),
     ("Pentecostal",         "Other Christian", r"pentecost|pentekosta|pentecost[eé]s|pantekosta|\bgbi\b|foursquare|cuadrangular"),
     ("Salvation Army",      "Other Christian", r"salvation army|ej[eé]rcito de salvaci[oó]n"),
@@ -46,6 +47,22 @@ RULES = [
 ]
 RULES = [(lab, cls, re.compile(rx, re.I)) for lab, cls, rx in RULES]
 
+# Second pass: names with no explicit denomination word but an unambiguous
+# Catholic marker — Marian/devotional titles, Catholic religious orders and
+# missions, and strongly Catholic-associated saints. Applied only if no rule
+# above matched, so e.g. "ACK St Teresa" stays Anglican.
+CATHOLIC_MARKERS = re.compile(
+    r"our lady|nuestra se|nossa senhora|notre[- ]dame|madonna|"
+    r"immacul|inmaculada|imaculada|sacred heart|sagrado cora|"
+    r"rosary|rosari|ros[áa]rio|mount carmel|\bcarmel|perpetual help|perpetuo socorro|"
+    r"fatima|f[áa]tima|lourdes|guadalupe|assumption|asunci[óo]n|assun[cç][ãa]o|"
+    r"annunciation|corpus christi|blessed sacrament|divine mercy|cristo rey|precious blood|"
+    r"comboni|consolata|salesian|don bosco|marist|oblate|franciscan|dominican|"
+    r"jesuit|loyola|ignatius|xavier|de la salle|spiritan|mill hill|redemptorist|"
+    r"vincent de paul|padre pio|\bteresa|th[ée]r[èe]se|"
+    r"bakhita|kizito|lwanga|aquinas|goretti|"
+    r"parroquia|paroquia|paroisse|parroquial", re.I)
+
 
 def guess(name):
     if not isinstance(name, str):
@@ -54,6 +71,8 @@ def guess(name):
     for lab, cls, rx in RULES:
         if rx.search(s):
             return (lab, cls)
+    if CATHOLIC_MARKERS.search(s):
+        return ("Catholic", "Catholic")
     return (None, None)
 
 
