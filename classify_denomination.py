@@ -27,23 +27,24 @@ CSV = ROOT / "data" / "osm_churches_near_tsip.csv"
 
 # (specific denomination, broad class, regex) — checked in order, first match wins
 RULES = [
-    ("Catholic",            "Catholic",        r"\bcatholic|cath[oó]lic|kath?olik|katolik|\br\.?c\.?\b|gereja katolik|roman catholic"),
-    ("Anglican/Episcopal",  "Anglican",        r"anglican|anglicana|episcopal|church of england|\ba\.?c\.?k\.?\b|church of the province"),
+    ("Catholic",            "Catholic",        r"\bcatholic|cath[oó]lic|kath?olik|katolik|\br\.?c\.?\b|gereja katolik|roman catholic|katolika romana|\bekar\b"),
+    ("Anglican/Episcopal",  "Anglican",        r"anglican|anglicana|episcopal|church of england|\ba\.?c\.?k\.?\b|church of the province|\bcsi\b|\bcni\b"),
     ("Orthodox",            "Other Christian", r"orthodox|ortodox|ortodoxa|coptic|tewahedo|jacobite|syriac"),
     ("Methodist",           "Other Christian", r"methodist|metodist|metodista"),
-    ("Presbyterian",        "Other Christian", r"presbyterian|presbiterian|presbiteriana|\bpcea\b|reform"),
+    ("Presbyterian",        "Other Christian", r"presbyterian|presbiterian|presbiteriana|\bpcea\b|\bccap\b|reform"),
     ("Baptist",             "Other Christian", r"baptist|bautista|batista|\bbaptis\b"),
-    ("Lutheran",            "Other Christian", r"luther|luteran|luterana|luth[ée]rien|\bhkbp\b"),
+    ("Lutheran",            "Other Christian", r"luther|luteran|luterana|luth[ée]rien|loterana|\bhkbp\b|\bkkkt\b|\bflm\b"),
     ("Adventist",           "Other Christian", r"adventist|adventista|seventh[- ]day|\bsda\b"),
     ("Church of God",       "Other Christian", r"church of god|\bcogic\b"),
-    ("Assemblies of God",   "Other Christian", r"assemblies of god|assembly of god|asambleas de dios|assembleia de deus|\baog\b"),
-    ("Pentecostal",         "Other Christian", r"pentecost|pentekosta|pentecost[eé]s|pantekosta|\bgbi\b|foursquare|cuadrangular"),
+    ("Assemblies of God",   "Other Christian", r"assemblies of god|assembly of god|asambleas de dios|assembleia de deus|\baog\b|\bpag\b|\btag\b|\beagt\b|\bgsja\b|\bzaoga\b"),
+    ("Pentecostal",         "Other Christian", r"pentecost|pentekosta|pentecost[eé]s|pantekosta|\bgbi\b|\bgpdi\b|\bgbt\b|\bgbis\b|\bccb\b|\bicgc\b|\bcitam\b|foursquare|cuadrangular"),
     ("Salvation Army",      "Other Christian", r"salvation army|ej[eé]rcito de salvaci[oó]n"),
     ("Jehovah's Witnesses", "Other Christian", r"jehovah|kingdom hall|testigos de jehov|saksi.?yehuwa"),
     ("Latter-day Saints",   "Other Christian", r"latter[- ]day|of latter|\blds\b|mormon"),
     ("Iglesia ni Cristo",   "Other Christian", r"iglesia ni (cristo|kristo)"),
-    ("Apostolic",           "Other Christian", r"apostolic|apost[oó]lica|apostolik"),
-    ("Evangelical",         "Other Christian", r"evangelic|evang[eé]lic|evangelis|\binjili\b"),
+    ("Apostolic",           "Other Christian", r"apostolic|apost[oó]lica|apostolik|\bags\b"),
+    ("Protestant (regional)","Other Christian", r"\bgki\b|\bgpi\b|\bgpib\b|\bgmim\b|\bgke\b|\bgkj\b|\bgks\b|\bgmit\b|\bgbkp\b|\bgkpi\b|\bgmist\b|\bgkjw\b|\buccp\b|fjkm"),
+    ("Evangelical",         "Other Christian", r"evangelic|evang[eé]lic|evangelis|\binjili\b|\bgkii\b|\bsib\b|\becwa\b|\beec\b|\ba\.?i\.?c\.?\b|\bpefa\b"),
 ]
 RULES = [(lab, cls, re.compile(rx, re.I)) for lab, cls, rx in RULES]
 
