@@ -17,7 +17,7 @@ OpenStreetMap:
 - **18,199 (8.3%)** sit within **5 km** of a documented contaminated site
 - **2,615 (1.2%)** sit within **1 km**
 - **Lead** is the most common nearby pollutant (≈9,400 churches within 5 km of a lead site)
-- By denomination within 5 km: Catholic ≈4,100, Anglican ≈150, the rest unlabelled in OSM
+- By denomination within 5 km (OSM tag + name-inferred): Catholic ≈4,500, other Christian ≈6,100 (Pentecostal, Baptist, Evangelical, Adventist…), Anglican ≈210; ≈7,300 still unlabelled
 - Most affected countries (within 5 km): Philippines (3,079), Brazil (2,144), Indonesia (1,707), Kenya (1,500), Ghana (1,430)
 
 A companion count from the parent paper's school-census data: **10,890**
@@ -48,7 +48,12 @@ parent paper's proximity routine. We then flag churches within 1 km and 5 km.
 See [`proximity.py`](proximity.py).
 
 **4. Denomination classes.** The free-text OSM `denomination` tag was grouped
-into Catholic, Anglican, Other Christian, and Unspecified (`denom_class`).
+into Catholic, Anglican, Other Christian, and Unspecified (`denom_class`). About
+46% of churches have no denomination tag; for those, denomination was inferred
+from the church *name* by multilingual keyword match (`classify_denomination.py`),
+producing `denom_guess` (specific denomination) and `denom_class_final` (combined
+tag + name-inferred class). Only ~15% of untagged churches have a name with a
+clear signal; ambiguous names (e.g. "St Mary's Church") are left Unspecified.
 
 ## Reproduce
 
@@ -88,6 +93,7 @@ index.html           self-contained page: write-up + interactive map + reference
 churches_1km.json / churches_5to.json / sites.json   map data
 briefing_text_source.md   plain-text source of the write-up
 analyse.py           reproduces summary tables + chart from the dataset
+classify_denomination.py   infers denomination from church names (untagged churches)
 proximity.py         the core nearest-site method (documented)
 requirements.txt
 figures/             generated chart

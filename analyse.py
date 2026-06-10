@@ -28,11 +28,14 @@ print(f"Countries                    : {df['country'].nunique()}")
 print(f"Within 5 km of a site        : {n5:,} ({100*n5/n:.1f}%)")
 print(f"Within 1 km of a site        : {n1:,} ({100*n1/n:.1f}%)")
 
-print("\nBy denomination (within 5 km):")
-print(df.loc[df.within_5km == 1, "denom_class"].value_counts().to_string())
-
-print("\nBy denomination (within 1 km):")
-print(df.loc[df.within_1km == 1, "denom_class"].value_counts().to_string())
+w5 = df[df.within_5km == 1]
+print("\nBy denomination (within 5 km) — OSM tag only:")
+print(w5["denom_class"].value_counts().to_string())
+if "denom_class_final" in df.columns:
+    print("\nBy denomination (within 5 km) — tag + name-inferred:")
+    print(w5["denom_class_final"].value_counts().to_string())
+    print("\nSpecific denominations inferred from names (within 5 km):")
+    print(w5.loc[w5.denom_class == "Unspecified", "denom_guess"].dropna().value_counts().to_string())
 
 print("\nMost common nearby pollutant (within 5 km):")
 print(df.loc[df.within_5km == 1, "pollutant"].value_counts().head(6).to_string())

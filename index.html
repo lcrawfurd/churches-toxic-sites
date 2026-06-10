@@ -91,7 +91,7 @@
 <p>The pattern for churches looks just like the one for schools. Industry, housing, and the buildings where people gather concentrate in the same crowded, under-regulated urban areas. A church is not near a toxic site because anyone chose to put it there; it is near a toxic site for the same reason a school or a home is.</p>
 
 <h2>Where the churches are</h2>
-<p>Five countries account for most of the affected churches within 5&nbsp;km: the Philippines (3,079), Brazil (2,144), Indonesia (1,707), Kenya (1,500), and Ghana (1,430). Of the churches we can classify by denomination, the largest identifiable groups near sites are Catholic (about 4,100 within 5&nbsp;km) and Anglican (about 150), with most of the rest unlabelled in the data.</p>
+<p>Five countries account for most of the affected churches within 5&nbsp;km: the Philippines (3,079), Brazil (2,144), Indonesia (1,707), Kenya (1,500), and Ghana (1,430). Of the churches we can classify by denomination, the largest groups within 5&nbsp;km are Catholic (about 4,500), other Protestant and independent churches (about 6,100 — led by Pentecostal, Baptist, Evangelical, and Adventist congregations), and Anglican (about 210). Where OpenStreetMap carried no denomination tag we inferred it from the church's name where the name made it clear; about 7,300 churches still could not be classified.</p>
 <figure>
   <img alt="Churches within 5 km of a documented contaminated site, top 10 countries" src="figures/churches_by_country_top10.png">
   <figcaption class="cap">Churches within 5&nbsp;km of a documented contaminated site, top 10 countries.</figcaption>
@@ -104,7 +104,7 @@
 <p>Churches cannot fix industrial pollution. But they are trusted local institutions with reach that governments often lack — and in Flint, Michigan, faith leaders and teachers were among the first to press the case that something was wrong with the water. Three modest roles stand out: <strong>awareness</strong> (telling families near a site how to reduce exposure — hand-washing, keeping toddlers off contaminated soil, blood-lead testing); <strong>pressure</strong> (asking local authorities for soil and water testing around their buildings and schools, which is cheap and rarely done); and <strong>screening</strong> locations for nearby industry before building new schools and clinics.</p>
 
 <h2>How this was done</h2>
-<p>Church locations come from OpenStreetMap (Christian places of worship), downloaded via the Overpass API for 40 countries. Each church is matched to the nearest documented contaminated site in Pure Earth's Toxic Sites Identification Program, using the same great-circle proximity method as the parent paper. Full code, data, and a longer methods note are in the <a href="https://github.com/lcrawfurd/churches-toxic-sites#readme" target="_blank">GitHub repository</a>.</p>
+<p>Church locations come from OpenStreetMap (Christian places of worship), downloaded via the Overpass API for 40 countries. Each church is matched to the nearest documented contaminated site in Pure Earth's Toxic Sites Identification Program, using the same great-circle proximity method as the parent paper. Denomination comes from OpenStreetMap where tagged; where it was missing, we inferred it from the church's name using a multilingual keyword match, for names with a clear signal only. Full code, data, and a longer methods note are in the <a href="https://github.com/lcrawfurd/churches-toxic-sites#readme" target="_blank">GitHub repository</a>.</p>
 
 <p class="note"><strong>Caveats.</strong> These numbers measure <em>proximity</em>, not exposure. OpenStreetMap under-maps rural buildings and covers Christian places of worship only (no mosques, temples, or gurdwaras), and the contaminated-site database itself captures only a fraction of real sites — so every count here is a lower bound. This is a quick companion analysis, not a peer-reviewed paper.</p>
 
@@ -163,7 +163,7 @@ function cluster(color){return L.markerClusterGroup({chunkedLoading:true,maxClus
       `width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;`+
       `font:700 12px Arial">${n}</div>`,className:'',iconSize:[sz,sz]});}});}
 function marker(c,color){return L.circleMarker([c.la,c.lo],{radius:4,color:color,weight:1,fillColor:color,fillOpacity:.85})
-  .bindPopup(`<b>${esc(c.n)||'Church'}</b><br><span style="color:#888">${esc(c.c)} · ${esc(c.de)}</span><br>`+
+  .bindPopup(`<b>${esc(c.n)||'Church'}</b><br><span style="color:#888">${esc(c.c)} · ${esc(c.de)}${c.g?` — ${esc(c.g)} (from name)`:''}</span><br>`+
     `${c.d}&nbsp;km from nearest site<br>Nearest: ${esc(c.s)||'—'}<br>Pollutant: <b>${esc(c.p)||'—'}</b>`);}
 
 const near1 = cluster('#C0392B');
