@@ -89,8 +89,10 @@ TSIP additionally needs the Overpass download and the TSIP site coordinates
 
 - Church locations: © OpenStreetMap contributors (ODbL).
 - Contaminated sites: Pure Earth, Toxic Sites Identification Program.
-- Parent paper & replication package: see the main *Schools in the Shadow of
-  Toxic Sites* repository / Zenodo deposit (DOI 10.5281/zenodo.19359187).
+- Parent paper: published CGD blog,
+  https://www.cgdev.org/blog/millions-children-go-school-near-toxic-site
+- Replication package: main *Schools in the Shadow of Toxic Sites* Zenodo
+  deposit (DOI 10.5281/zenodo.19359187).
 
 ## Files
 
